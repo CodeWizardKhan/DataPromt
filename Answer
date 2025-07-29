@@ -1,0 +1,168 @@
+Here's the Serenity Cucumber code based on your provided test scenario BRCCOMNI-10990 for verifying data populating in HTML Page and Excel data, with all the components structured as per your existing framework:
+
+
+---
+
+✅ 1. Feature File
+
+File Name: CustomerCommunicationsInquiry.feature
+
+Feature: Customer Communications Inquiry - Production Report Data Validation
+
+  @issue:BRCCOMNI-10990
+  Scenario: PRI - Verify data populating in HTML Page and Excel
+    Given User is on the Production Reports and Inquiries page
+    When User clicks on the Customer Communications Inquiry
+    Then The page should navigate to Customer Communications Inquiry
+    When User enters valid test data
+    And Clicks on Submit and Excel buttons
+    Then Selected test data should be displayed in HTML Page and Excel
+
+
+---
+
+✅ 2. Step Definition File
+
+File Name: ProductionReportandInqueriesStepDefs.java
+
+public class ProductionReportandInqueriesStepDefs {
+
+    @Steps
+    ProductionReportandInqueriesSteps productionReportandInqueriesSteps;
+
+    @Given("User is on the Production Reports and Inquiries page")
+    public void userIsOnProductionReportsPage() throws Exception {
+        productionReportandInqueriesSteps.navigateToProductionReports();
+    }
+
+    @When("User clicks on the Customer Communications Inquiry")
+    public void userClicksOnCustomerCommunicationsInquiry() throws Exception {
+        productionReportandInqueriesSteps.clickCustomerCommunicationsInquiry();
+    }
+
+    @Then("The page should navigate to Customer Communications Inquiry")
+    public void userIsOnCustomerCommunicationsInquiryPage() throws Exception {
+        productionReportandInqueriesSteps.verifyCustomerCommunicationsInquiryPage();
+    }
+
+    @When("User enters valid test data")
+    public void userEntersValidTestData() throws Exception {
+        productionReportandInqueriesSteps.enterTestDataInCustomerInquiry();
+    }
+
+    @When("Clicks on Submit and Excel buttons")
+    public void userClicksOnSubmitAndExcelButtons() throws Exception {
+        productionReportandInqueriesSteps.submitAndDownloadExcel();
+    }
+
+    @Then("Selected test data should be displayed in HTML Page and Excel")
+    public void verifyHTMLAndExcelData() throws Exception {
+        productionReportandInqueriesSteps.verifyHTMLandExcelOutput();
+    }
+}
+
+
+---
+
+✅ 3. Page Object
+
+File Name: ProductionReportandInqueriesPage.java
+
+public class ProductionReportandInqueriesPage extends PageObject {
+
+    @FindBy(xpath = "//div[contains(text(),'Production Reports')]")
+    public WebElementFacade productionReportandInqueriesTitle;
+
+    @FindBy(xpath = "//a[text()='Customer Communications Inquiry']")
+    public WebElementFacade customerCommunicationsInquiryLink;
+
+    @FindBy(id = "tMobileDropdown")
+    public WebElementFacade tMobileColorStatementsDropdown;
+
+    @FindBy(id = "checkInAccount")
+    public WebElementFacade checkInAccountCheckbox;
+
+    @FindBy(id = "testField")
+    public WebElementFacade testFieldInput;
+
+    @FindBy(id = "startDate")
+    public WebElementFacade startDateInput;
+
+    @FindBy(id = "endDate")
+    public WebElementFacade endDateInput;
+
+    @FindBy(id = "submitBtn")
+    public WebElementFacade submitButton;
+
+    @FindBy(id = "excelDownloadBtn")
+    public WebElementFacade excelDownloadButton;
+
+    @FindBy(id = "htmlOutputTable")
+    public WebElementFacade htmlOutputData;
+
+    // Use appropriate locators based on actual UI
+}
+
+
+---
+
+✅ 4. Step Implementation
+
+File Name: ProductionReportandInqueriesSteps.java
+
+public class ProductionReportandInqueriesSteps {
+
+    @Steps
+    ProductionReportandInqueriesPage page;
+
+    CommonMethods commonMethods;
+
+    private static final Logger logger = LoggerFactory.getLogger(ProductionReportandInqueriesSteps.class);
+
+    public void navigateToProductionReports() throws Exception {
+        logger.info("navigateToProductionReports() : Start");
+        try {
+            page.productionReportandInqueriesTitle.waitUntilClickable();
+            logger.info("productionReportandInqueriesTitle is displayed: " + page.productionReportandInqueriesTitle.isDisplayed());
+            page.productionReportandInqueriesTitle.click();
+        } catch (Exception e) {
+            logger.error("Error navigating to Production Reports", e);
+        }
+        commonMethods.clickOnSendAnyway();
+        logger.info("navigateToProductionReports() : End");
+    }
+
+    public void clickCustomerCommunicationsInquiry() {
+        page.customerCommunicationsInquiryLink.waitUntilClickable().click();
+    }
+
+    public void verifyCustomerCommunicationsInquiryPage() {
+        Assert.assertTrue("Customer Communications Inquiry not displayed", page.testFieldInput.isDisplayed());
+    }
+
+    public void enterTestDataInCustomerInquiry() {
+        page.tMobileColorStatementsDropdown.selectByVisibleText("T-Mobile Color Statements Mailed");
+        page.checkInAccountCheckbox.click();
+        page.testFieldInput.type("106645754");
+        page.startDateInput.type("2025-07-01");
+        page.endDateInput.type("2025-07-29");
+    }
+
+    public void submitAndDownloadExcel() {
+        page.submitButton.click();
+        page.excelDownloadButton.click();
+    }
+
+    public void verifyHTMLandExcelOutput() {
+        Assert.assertTrue("HTML Output not visible", page.htmlOutputData.isDisplayed());
+        // Add more validations if needed for Excel content using Apache POI or other Excel parser
+    }
+}
+
+
+---
+
+If you also want to validate downloaded Excel data, you can include Excel reader utilities using Apache POI to parse the Excel file from the default download path and match test data.
+
+Would you like help with that Excel file verification as well?
+
